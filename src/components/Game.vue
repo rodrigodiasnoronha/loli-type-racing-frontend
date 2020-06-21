@@ -1,0 +1,207 @@
+<template>
+    <v-row>
+        <v-col cols="12 mb-5">
+            <LoliRace :loli-position="loliPosition" />
+        </v-col>
+
+        <v-col col="12">
+            <v-card
+                style="margin-left: auto; margin-right: auto;"
+                :max-width="700"
+                width="100%"
+            >
+                <v-card-title
+                    >Game started
+                    <v-btn
+                        v-on:click="restart()"
+                        color="#303f9f"
+                        :dark="true"
+                        class="ml-2"
+                    >
+                        Restart
+                    </v-btn>
+                    <v-btn
+                        :disabled="false"
+                        color="#303f9f"
+                        :dark="true"
+                        class="ml-2"
+                    >
+                        {{ time }}
+                    </v-btn>
+                </v-card-title>
+
+                <v-card-text>
+                    <v-row>
+                        <v-col cols="12">
+                            <div class="text-h6 contentContainer">
+                                <span
+                                    class="firstWord"
+                                    v-if="typed.length <= 0"
+                                >
+                                    {{ renderFirstWord }}
+                                </span>
+                                <span
+                                    v-else-if="!words[0].indexOf(typed)"
+                                    class="rightWord firstWord"
+                                >
+                                    {{ renderFirstWord }}
+                                </span>
+                                <span v-else class="wrongWord firstWord">
+                                    {{ renderFirstWord }}
+                                </span>
+                                {{ renderRestWords }}
+                            </div>
+                        </v-col>
+
+                        <v-col cols="12">
+                            <v-text-field v-model="typed" label="Type...">
+                            </v-text-field>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+            </v-card>
+        </v-col>
+
+        <v-col cols="12">
+            <v-dialog max-width="700px" v-model="gameFinished">
+                <v-card>
+                    <v-card-title>Time finished</v-card-title>
+
+                    <v-card-text>
+                        <h3>{{ name }}'s time: {{ result }}</h3>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn  @click="restart" color="primary">OK</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-col>
+    </v-row>
+</template>
+
+<script>
+import paragraphs from '../utils/phrases';
+import LoliRace from './LoliRace';
+
+export default {
+    name: 'Game',
+    data: () => ({
+        typed: '',
+        words: paragraphs[Math.floor(Math.random() * paragraphs.length)],
+        time: 60,
+        started: false,
+        intervalId: null,
+        loliPosition: '0%',
+        gameFinished: true,
+        result: '',
+        wordsTyped: ['apple', 'pie', 'pineapple', 'harry', 'lisa', 'lisa'],
+    }),
+    props: {
+        name: String,
+    },
+    watch: {
+        time(time) {
+            this.updatedLoliPosition(time);
+        },
+        typed(typed) {
+            this.verifyWordsMatch(typed);
+        },
+    },
+    mounted() {},
+    components: {
+        LoliRace,
+    },
+    computed: {
+        renderFirstWord() {
+            const [firstWord] = this.words;
+            return firstWord;
+        },
+
+        renderRestWords() {
+            const [, ...rest] = this.words;
+            return rest.join(' ');
+        },
+    },
+
+    methods: {
+        restart() {
+            clearInterval(this.intervalId);
+            this.gameFinished = false;
+            this.started = false;
+            this.time = 60;
+            this.words =
+                paragraphs[Math.floor(Math.random() * paragraphs.length)];
+        },
+
+        startGame() {
+            this.started = true;
+
+            if (this.intervalId) {
+                clearInterval(this.intervalId);
+                this.time = 60;
+            }
+
+            this.intervalId = setInterval(() => {
+                if (this.time >= 1) {
+                    this.time -= 1;
+                } else {
+                    this.finishGame();
+                }
+            }, 1000);
+        },
+
+        verifyWordsMatch(typed = '') {
+            // inicia o jogo se ele não estiver iniciado
+            if (!this.started) {
+                this.startGame();
+            }
+
+            // retira espaços do campo digitado
+            this.typed = typed.trim();
+
+            // se a palavra for totalmente igual
+            if (this.words[0] === this.typed) {
+                this.wordsTyped.push(this.words[0]);
+                this.typed = '';
+                this.words.shift();
+            }
+
+            // se tiver poucas palavras no array words ele coloca mais palavras
+            if (this.words.length <= 10) {
+                const words = this.words;
+                this.words = [
+                    ...words,
+                    ...paragraphs[
+                        Math.round(Math.random() * paragraphs.length)
+                    ],
+                ];
+            }
+        },
+
+        updatedLoliPosition(time) {
+            const result = (time * 100) / 60;
+            this.loliPosition = `${100 - result.toFixed(0)}%`;
+        },
+
+        finishGame() {
+            const reduce = (acumulator, item) => acumulator + item.length;
+            const totalLettersTyped = this.wordsTyped.reduce(reduce, 0);
+            console.log(totalLettersTyped);
+        },
+    },
+};
+</script>
+
+<style>
+.firstWord {
+    color: #333;
+}
+
+.wrongWord {
+    color: #f44336 !important;
+}
+
+.rightWord {
+    color: #64dd17 !important;
+}
+</style>

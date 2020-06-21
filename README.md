@@ -1,24 +1,7 @@
-# web
 
-## Project setup
-```
-npm install
-```
+![asdjasod](src/assets/readme.jpg)
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Loli Type Racing
 
-### Compiles and minifies for production
-```
-npm run build
-```
+A web application to verify how many words you can type in one minute.
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

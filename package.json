@@ -5,14 +5,14 @@
     "scripts": {
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
-        "lint": "vue-cli-service lint"
+        "lint": "vue-cli-service lint",
+        "gh-pages": "gh-pages -d dist"
     },
     "dependencies": {
         "core-js": "^3.6.5",
         "prettier": "^2.0.5",
         "vue": "^2.6.11",
-        "vuetify": "^2.2.11",
-        "gh-pages": "gh-pages -d dist"
+        "vuetify": "^2.2.11"
     },
     "devDependencies": {
         "@vue/cli-plugin-babel": "~4.4.0",

@@ -1,33 +1,17 @@
 <template>
-    <v-row>
+    <v-progress-circular v-if="loading" :indeterminate="true"></v-progress-circular>
+
+    <v-row v-else>
         <v-col cols="12 mb-5">
             <LoliRace :loli-position="loliPosition" />
         </v-col>
 
         <v-col col="12">
-            <v-card
-                style="margin-left: auto; margin-right: auto;"
-                :max-width="700"
-                width="100%"
-            >
-                <v-card-title
-                    >Game started
-                    <v-btn
-                        v-on:click="restart()"
-                        color="#303f9f"
-                        :dark="true"
-                        class="ml-2"
-                    >
-                        Restart
-                    </v-btn>
-                    <v-btn
-                        :disabled="false"
-                        color="#303f9f"
-                        :dark="true"
-                        class="ml-2"
-                    >
-                        {{ time }}
-                    </v-btn>
+            <v-card style="margin-left: auto; margin-right: auto;" :max-width="700" width="100%">
+                <v-card-title>
+                    Game started
+                    <v-btn v-on:click="restart()" color="#303f9f" :dark="true" class="ml-2">Restart</v-btn>
+                    <v-btn :disabled="false" color="#303f9f" :dark="true" class="ml-2">{{ time }}</v-btn>
                 </v-card-title>
 
                 <v-card-text>
@@ -37,25 +21,23 @@
                                 <span
                                     class="firstWord"
                                     v-if="typed.length <= 0"
-                                >
-                                    {{ renderFirstWord }}
-                                </span>
+                                >{{ renderFirstWord }}</span>
                                 <span
                                     v-else-if="!words[0].indexOf(typed)"
                                     class="rightWord firstWord"
-                                >
-                                    {{ renderFirstWord }}
-                                </span>
-                                <span v-else class="wrongWord firstWord">
-                                    {{ renderFirstWord }}
-                                </span>
+                                >{{ renderFirstWord }}</span>
+                                <span v-else class="wrongWord firstWord">{{ renderFirstWord }}</span>
                                 {{ renderRestWords }}
                             </div>
                         </v-col>
 
                         <v-col cols="12">
-                            <v-text-field v-model="typed" label="Type...">
-                            </v-text-field>
+                            <v-text-field
+                                v-model="typed"
+                                @keyup="onTypedInputChange()"
+                                type="text"
+                                label="Type..."
+                            ></v-text-field>
                         </v-col>
                     </v-row>
                 </v-card-text>
@@ -67,11 +49,20 @@
                 <v-card>
                     <v-card-title>Time finished</v-card-title>
 
+                    <v-card-subtitle>{{ name }}'s time: {{ result }}</v-card-subtitle>
+
                     <v-card-text>
-                        <h3>{{ name }}'s time: {{ result }}</h3>
+                        <p class="text-h5">
+                            You can type {{ wordsTyped.length }} words in 1
+                            minute
+                        </p>
+                        <p class="text-h5">
+                            Total of letters typed in 1 minute:
+                            {{ totalLettersTyped }}
+                        </p>
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn  @click="restart" color="primary">OK</v-btn>
+                        <v-btn @click="restart" color="primary">OK</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -94,8 +85,13 @@ export default {
         loliPosition: '0%',
         gameFinished: true,
         result: '',
-        wordsTyped: ['apple', 'pie', 'pineapple', 'harry', 'lisa', 'lisa'],
+        wordsTyped: [],
+        totalLettersTyped: 0,
+        loading: true,
     }),
+    mounted() {
+        this.loading = false;
+    },
     props: {
         name: String,
     },
@@ -103,11 +99,7 @@ export default {
         time(time) {
             this.updatedLoliPosition(time);
         },
-        typed(typed) {
-            this.verifyWordsMatch(typed);
-        },
     },
-    mounted() {},
     components: {
         LoliRace,
     },
@@ -124,13 +116,24 @@ export default {
     },
 
     methods: {
+        onTypedInputChange() {
+            const result = this.verifyWordsMatch();
+
+            // verifica se é necessário resetar o input
+            if (result) {
+                this.typed = '';
+            }
+        },
+
         restart() {
             clearInterval(this.intervalId);
-            this.gameFinished = false;
             this.started = false;
             this.time = 60;
             this.words =
                 paragraphs[Math.floor(Math.random() * paragraphs.length)];
+            this.loliPosition = '0%';
+            this.typed = '';
+            this.gameFinished = false;
         },
 
         startGame() {
@@ -150,20 +153,21 @@ export default {
             }, 1000);
         },
 
-        verifyWordsMatch(typed = '') {
+        verifyWordsMatch() {
             // inicia o jogo se ele não estiver iniciado
             if (!this.started) {
                 this.startGame();
             }
 
             // retira espaços do campo digitado
-            this.typed = typed.trim();
+            const typedFormated = this.typed;
+            this.typed = typedFormated.trim();
 
-            // se a palavra for totalmente igual
+            // se a palavra for totalmente igual limpar input & remover palavra do array de palavras & add palavras digitadas
             if (this.words[0] === this.typed) {
                 this.wordsTyped.push(this.words[0]);
-                this.typed = '';
                 this.words.shift();
+                return true;
             }
 
             // se tiver poucas palavras no array words ele coloca mais palavras
@@ -176,6 +180,7 @@ export default {
                     ],
                 ];
             }
+            return false;
         },
 
         updatedLoliPosition(time) {
@@ -184,9 +189,13 @@ export default {
         },
 
         finishGame() {
-            const reduce = (acumulator, item) => acumulator + item.length;
-            const totalLettersTyped = this.wordsTyped.reduce(reduce, 0);
-            console.log(totalLettersTyped);
+            this.gameFinished = true;
+
+            // calcula o total de palavras digitadas e o total de letras digitadas
+            const total = this.wordsTyped.reduce((acumulator, item) => {
+                return acumulator + item.length;
+            }, 0);
+            this.totalLettersTyped = total;
         },
     },
 };

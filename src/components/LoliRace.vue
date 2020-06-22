@@ -1,28 +1,29 @@
 <template>
-    <v-container>
-        <div id="container">
-            <div id="racer-container">
-                <div :style="{ width: loliPosition }" class="loli-container">
-                    <img
-                        class="loli"
-                        :src="personagem"
-                        height="40"
-                        alt="loli"
-                        title="loli"
-                    />
-                </div>
-            </div>
-            <div id="finish-line-container">
+    <div
+        id="container"
+        style="max-width: 600px; margin-left: auto; margin-right: auto;"
+    >
+        <div id="racer-container">
+            <div :style="{ width: loliPosition }" class="loli-container">
                 <img
-                    height="50"
-                    class="finish"
-                    :src="finish"
-                    alt="finish line"
-                    title="finish line"
+                    class="loli"
+                    :src="personagem"
+                    height="40"
+                    alt="loli"
+                    title="loli"
                 />
             </div>
         </div>
-    </v-container>
+        <div id="finish-line-container">
+            <img
+                height="50"
+                class="finish"
+                :src="finish"
+                alt="finish line"
+                title="finish line"
+            />
+        </div>
+    </div>
 </template>
 
 <script>

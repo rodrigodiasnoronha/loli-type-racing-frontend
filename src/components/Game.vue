@@ -38,22 +38,28 @@
                 <v-card-text>
                     <v-row>
                         <v-col cols="12">
-                            <div class="text-h6 contentContainer">
-                                <span
-                                    class="firstWord"
-                                    v-if="typed.length <= 0"
-                                    >{{ renderFirstWord }}</span
-                                >
-                                <span
-                                    v-else-if="!words[0].indexOf(typed)"
-                                    class="rightWord firstWord"
-                                    >{{ renderFirstWord }}</span
-                                >
-                                <span v-else class="wrongWord firstWord">{{
-                                    renderFirstWord
-                                }}</span>
-                                {{ renderRestWords }}
-                            </div>
+                            <v-card>
+                                <v-card-text class="contentContainer">
+                                    <span
+                                        class="firstWord text-h6"
+                                        v-if="typed.length <= 0"
+                                        >{{ renderFirstWord }}</span
+                                    >
+                                    <span
+                                        v-else-if="!words[0].indexOf(typed)"
+                                        class="rightWord firstWord text-h6"
+                                        >{{ renderFirstWord }}</span
+                                    >
+                                    <span
+                                        v-else
+                                        class="wrongWord firstWord text-h6"
+                                        >{{ renderFirstWord }}</span
+                                    >
+                                    <span class="text-h6">
+                                        {{ renderRestWords }}
+                                    </span>
+                                </v-card-text>
+                            </v-card>
                         </v-col>
 
                         <v-col cols="12">
@@ -239,5 +245,11 @@ export default {
 
 .rightWord {
     color: #64dd17 !important;
+}
+
+.contentContainer {
+    height: 150px;
+    max-height: 150px;
+    overflow: hidden;
 }
 </style>

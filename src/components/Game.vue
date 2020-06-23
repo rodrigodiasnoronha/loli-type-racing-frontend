@@ -1,5 +1,10 @@
 <template>
-    <v-progress-circular v-if="loading" :indeterminate="true"></v-progress-circular>
+    <div
+        v-if="loading"
+        style="display: flex; justify-content: center; align-items: center;"
+    >
+        <v-progress-circular :indeterminate="true"></v-progress-circular>
+    </div>
 
     <v-row v-else>
         <v-col cols="12 mb-5">
@@ -7,11 +12,27 @@
         </v-col>
 
         <v-col col="12">
-            <v-card style="margin-left: auto; margin-right: auto;" :max-width="700" width="100%">
+            <v-card
+                style="margin-left: auto; margin-right: auto;"
+                :max-width="700"
+                width="100%"
+            >
                 <v-card-title>
                     Game started
-                    <v-btn v-on:click="restart()" color="#303f9f" :dark="true" class="ml-2">Restart</v-btn>
-                    <v-btn :disabled="false" color="#303f9f" :dark="true" class="ml-2">{{ time }}</v-btn>
+                    <v-btn
+                        v-on:click="restart()"
+                        color="#303f9f"
+                        :dark="true"
+                        class="ml-2"
+                        >Restart</v-btn
+                    >
+                    <v-btn
+                        :disabled="false"
+                        color="#303f9f"
+                        :dark="true"
+                        class="ml-2"
+                        >{{ time }}</v-btn
+                    >
                 </v-card-title>
 
                 <v-card-text>
@@ -21,12 +42,16 @@
                                 <span
                                     class="firstWord"
                                     v-if="typed.length <= 0"
-                                >{{ renderFirstWord }}</span>
+                                    >{{ renderFirstWord }}</span
+                                >
                                 <span
                                     v-else-if="!words[0].indexOf(typed)"
                                     class="rightWord firstWord"
-                                >{{ renderFirstWord }}</span>
-                                <span v-else class="wrongWord firstWord">{{ renderFirstWord }}</span>
+                                    >{{ renderFirstWord }}</span
+                                >
+                                <span v-else class="wrongWord firstWord">{{
+                                    renderFirstWord
+                                }}</span>
                                 {{ renderRestWords }}
                             </div>
                         </v-col>
@@ -49,7 +74,9 @@
                 <v-card>
                     <v-card-title>Time finished</v-card-title>
 
-                    <v-card-subtitle>{{ name }}'s time: {{ result }}</v-card-subtitle>
+                    <v-card-subtitle
+                        >{{ name }}'s time: {{ result }}</v-card-subtitle
+                    >
 
                     <v-card-text>
                         <p class="text-h5">
@@ -83,7 +110,7 @@ export default {
         started: false,
         intervalId: null,
         loliPosition: '0%',
-        gameFinished: true,
+        gameFinished: false,
         result: '',
         wordsTyped: [],
         totalLettersTyped: 0,

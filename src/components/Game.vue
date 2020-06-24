@@ -18,17 +18,16 @@
                 width="100%"
             >
                 <v-card-title>
-                    Game started
                     <v-btn
                         v-on:click="restart()"
-                        color="#303f9f"
+                        color="#e91e63"
                         :dark="true"
                         class="ml-2"
                         >Restart</v-btn
                     >
                     <v-btn
                         :disabled="false"
-                        color="#303f9f"
+                        color="#e91e63"
                         :dark="true"
                         class="ml-2"
                         >{{ time }}</v-btn
@@ -64,6 +63,7 @@
 
                         <v-col cols="12">
                             <v-text-field
+                                    color="#c2185b"
                                 v-model="typed"
                                 @keyup="onTypedInputChange()"
                                 type="text"

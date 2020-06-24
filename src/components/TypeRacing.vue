@@ -11,6 +11,7 @@
                                 :rules="inputNameRules"
                                 label="Name"
                                 v-model="name"
+                                color="#ad1457"
                         ></v-text-field>
 
                         <v-row>
@@ -18,13 +19,13 @@
                                 <v-btn
                                         v-on:click="start()"
                                         :block="true"
-                                        color="#303f9f"
+                                        color="#ec407a"
                                         :dark="true"
                                 >Start</v-btn
                                 >
                             </v-col>
                             <v-col cols="6">
-                                <v-btn :block="true" color="#303f9f" :dark="true"
+                                <v-btn :block="true" color="#ec407a" :dark="true"
                                 >Cancel</v-btn
                                 >
                             </v-col>

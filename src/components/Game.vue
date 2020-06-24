@@ -106,6 +106,7 @@
 <script>
 import paragraphs from '../utils/phrases';
 import LoliRace from './LoliRace';
+import api from '../services/api';
 
 export default {
     name: 'Game',
@@ -121,6 +122,7 @@ export default {
         wordsTyped: [],
         totalLettersTyped: 0,
         loading: true,
+        registered: false,
     }),
     mounted() {
         this.loading = false;
@@ -167,6 +169,7 @@ export default {
             this.loliPosition = '0%';
             this.typed = '';
             this.gameFinished = false;
+            this.registered = false;
         },
 
         startGame() {
@@ -177,11 +180,11 @@ export default {
                 this.time = 60;
             }
 
-            this.intervalId = setInterval(() => {
+            this.intervalId = setInterval(async () => {
                 if (this.time >= 1) {
                     this.time -= 1;
                 } else {
-                    this.finishGame();
+                    await this.finishGame();
                 }
             }, 1000);
         },
@@ -221,7 +224,7 @@ export default {
             this.loliPosition = `${100 - result.toFixed(0)}%`;
         },
 
-        finishGame() {
+        async finishGame() {
             this.gameFinished = true;
 
             // calcula o total de palavras digitadas e o total de letras digitadas
@@ -229,6 +232,20 @@ export default {
                 return acumulator + item.length;
             }, 0);
             this.totalLettersTyped = total;
+
+            try {
+                if (!this.registered) {
+                    await api.post('/players', {
+                        name: this.name,
+                        words_typed: this.wordsTyped.length,
+                        letters_typed: total,
+                    });
+
+                    this.registered = true;
+                }
+            } catch (err) {
+                alert('Ocorreu um erro ao cadastrar seu recorde');
+            }
         },
     },
 };
